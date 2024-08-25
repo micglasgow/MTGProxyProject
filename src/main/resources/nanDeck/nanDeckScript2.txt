@@ -1,0 +1,15 @@
+LINKMULTI = COUNT
+
+PRINT_HERE
+
+UNIT=INCH
+CARDSIZE=2.5, 3.5
+DPI=600
+PAGE=8.5,11,PORTRAIT,HVD
+
+VISUAL=G, 10, 10
+IMAGE=1-{(IMAGE)},[IMAGE],0%,0%,100%,100%
+ENDVISUAL
+BORDER= RECTANGLE, #181510, 0.01, CROSS, #808080, 0.03
+; Uncomment the following line to add page numbers to final print
+FOOTER="","{P} of {N}", CENTER

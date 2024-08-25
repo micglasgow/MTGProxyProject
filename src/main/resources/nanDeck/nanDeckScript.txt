@@ -1,0 +1,19 @@
+LINKMULTI = COUNT
+
+PRINT_HERE
+
+UNIT=INCH
+CARDSIZE=2.33333,3.37500
+DPI=300
+PAGE=8.5,11,LANDSCAPE,HVD
+GAP=3/16,6/16
+
+VISUAL=G, 10, 10
+;IMAGE="RANGE", "FILED", CENTER, CENTER, 95%, 95%
+IMAGE="1-{(IMAGE)}",[IMAGE],{2183/899}%,{247/100}%,{95/1}%,{2374/25}%
+RECTANGLE=,0%,{1225/13}%,100%,{75/13}%,#ffffff
+ENDVISUAL
+BORDER=RECTANGLE,#ffffff, .31, NONE, #ffffff
+
+; Uncomment the following line to add page numbers to final print
+; FOOTER="","{P} of {N}", CENTER
