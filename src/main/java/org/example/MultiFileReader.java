@@ -12,7 +12,7 @@ public class MultiFileReader {
     private String name;
 
     public MultiFileReader() {
-        this.name = "Collection_"+ UUID.randomUUID().toString();
+        this.name = "Collection_"+ UUID.randomUUID().toString() +".csv";
     }
 
     public String getFileName() {

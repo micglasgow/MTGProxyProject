@@ -21,7 +21,7 @@ public class NanDeckScriptGenerator {
             int i = 0;
             while ((line = reader.readLine()) != null) {
                 if (line.contains("PRINT_HERE")) {
-                    sb.append("LINK=" + Paths.get("src/main/resources/deckCSVs").toAbsolutePath().toString() + "\\" + deckName + ".csv\"");
+                    sb.append("LINK=" + Paths.get("src/main/resources/deckCSVs").toAbsolutePath().toString() + "\\" + deckName + "\"");
                     sb.append(System.lineSeparator());
                     sb.append("; ").append(fileDeckName);
                     sb.append(System.lineSeparator());

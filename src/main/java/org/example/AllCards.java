@@ -40,7 +40,7 @@ public class AllCards {
                 String cardName = card.get("name").asText();
                 if (cardNames.contains(cardName)) {
                     String id = card.get("id").asText();
-                    String borderCrop = card.get("image_uris").get("border_crop").asText();
+                    String borderCrop = card.get("image_uris").get("png").asText();
                     cardInfoList.add(new MTGCard(id, cardName, borderCrop));
                 }
             }
@@ -48,13 +48,61 @@ public class AllCards {
         return cardInfoList;
     }
 
+    public Boolean isDoubleFaced(String id) {
+        if (cards != null && cards.isArray()) {
+            for (JsonNode card : cards) {
+                if (card.get("id").asText().equals(id)) {
+                    if (card.has("card_faces") && !card.has("image_uris")) {
+                        System.out.println("Card " + card.get("name").asText() + " is double faced.");
+                        return true;
+                    }
+                }
+            }
+        }
+        return false;
+    }
+
+    public static List<MTGCard> getDoubleFacedCards(String id) {
+        List<MTGCard> doubleFacedCards = new ArrayList<>();
+        if (cards != null && cards.isArray()) {
+            for (JsonNode card : cards) {
+                if (card.get("id").asText().equals(id)) {
+                    if (card.has("card_faces") && card.get("card_faces").isArray()) {
+                        for (JsonNode cardFace : card.get("card_faces")) {
+                            String cardName = cardFace.get("name").asText().replaceAll(",", "");
+                            String imageUrl = cardFace.get("image_uris").get("png").asText();
+                            doubleFacedCards.add(new MTGCard(id, cardName, imageUrl));
+                        }
+                    }
+                }
+            }
+        }
+        System.out.println(doubleFacedCards.toString());
+        return doubleFacedCards;
+    }
+
     public static MTGCard getCardInfoById(String id) {
         if (cards != null && cards.isArray()) {
             for (JsonNode card : cards) {
                 if (card.get("id").asText().equals(id)) {
                     String cardName = card.get("name").asText();
-                    String borderCrop = card.get("image_uris").get("png").asText();
-                    return new MTGCard(id, cardName, borderCrop);
+                    String imageUrl = null;
+
+                    try {
+                        imageUrl = card.get("image_uris").get("png").asText();
+                    } catch (NullPointerException e) {
+                        System.out.println("No png image found for card: " + cardName);
+                        System.out.println("Attempting to use large jpg image instead");
+                    }
+                    if (imageUrl == null) {
+                        try {
+                            imageUrl = card.get("image_uris").get("large").asText();
+                        } catch (NullPointerException e) {
+                            System.out.println("No large image found for card: " + cardName);
+                            imageUrl = "000_Magic_card_back.png";
+                        }
+                    }
+                    return new MTGCard(id, cardName, imageUrl);
                 }
             }
         }

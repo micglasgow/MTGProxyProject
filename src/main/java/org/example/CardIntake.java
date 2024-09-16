@@ -16,9 +16,14 @@ public class CardIntake {
     private List<MTGCard> cardList;
     private LinkedHashMap<String, Integer> cardCountMap;
 
+    private Boolean isMiltiFile = false;
+
     public CardIntake(File[] csvFiles) {
         cardList = new ArrayList<>();
         cardCountMap = new LinkedHashMap<>();
+        if (csvFiles.length > 1) {
+            isMiltiFile = true;
+        }
         for (File file : csvFiles) {
             processCSVFile(file);
         }
@@ -34,27 +39,39 @@ public class CardIntake {
             for (String[] record : records) {
                 System.out.println("Record: " + Arrays.toString(record));
             }
-            for (int i = 1; i < records.size(); i++) {
+            for (int i = 0; i < records.size(); i++) {
                 String[] record = records.get(i);
-                if (i == 1) {
+                if (record[2].equals("name")) {
                     continue;
                 }
                 String cardId = record[16];
-                String cardName = record[2];
 
-                try {
-                    Integer.parseInt(record[1]);
-                } catch (NumberFormatException e) {
-                    continue;
+                if (allCards.isDoubleFaced(cardId)) {
+                    List<MTGCard> doubleFacedCard = allCards.getDoubleFacedCards(cardId);
+                    for (MTGCard card : doubleFacedCard) {
+                        cardList.add(card);
+                        int count = Integer.parseInt(record[1]);
+                        cardCountMap.put(card.getFileName(), count);
+                    }
+                } else {
+                    String cardName = record[2];
+                    String type = record[4];
+
+                    try {
+                        Integer.parseInt(record[1]);
+                    } catch (NumberFormatException e) {
+                        continue;
+                    }
+                    int cardCount = Integer.parseInt(record[1]);
+                    String imageUrl = allCards.getCardInfoById(cardId).getImageUrl();
+                    MTGCard mtgCard = new MTGCard(cardId, cardName, imageUrl, type);
+                    cardList.add(mtgCard);
+                    cardCountMap.put(mtgCard.getFileName(), cardCount);
                 }
-                int cardCount = Integer.parseInt(record[1]);
-                String imageUrl = allCards.getCardInfoById(cardId).getImageUrl();
-                cardList.add(new MTGCard(cardId, cardName.toString().replaceAll(",", ""), imageUrl));
-                cardCountMap.put(cardId, cardCount);
             }
 
-            System.out.println("Card ID List: " + cardList.toString().replaceAll("},", "},\n"));
-            System.out.println("Card Count Map: " + cardCountMap);
+            System.out.println("Card ID List: \r\n" + cardList.toString().replaceAll("},", "},\n"));
+            System.out.println("Card Count Map: \r\n" + cardCountMap);
         } catch (IOException | CsvException e) {
             e.printStackTrace();
         }
@@ -69,8 +86,15 @@ public class CardIntake {
         return cardCountMap;
     }
 
-    public boolean isDivisibleByNumber(int number) {
-        int totalCards = cardCountMap.values().stream().mapToInt(Integer::intValue).sum();
-        return totalCards % number == 0;
+    public int getTotalCardCount(Boolean countBasicLands) {
+        int totalCards = 0;
+        for (MTGCard card : cardList) {
+            if (!countBasicLands && card.getType().startsWith("Basic Land")) {
+                continue;
+            }
+            int count = cardCountMap.get(card.getFileName());
+            totalCards += count;
+        }
+        return totalCards;
     }
 }

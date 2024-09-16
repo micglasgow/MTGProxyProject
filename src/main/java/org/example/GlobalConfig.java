@@ -13,7 +13,6 @@ public class GlobalConfig {
         return API_ENDPOINT;
     }
 
-
     private static final String ImageDirectory = "src/main/resources/images/";
     public static String getImageDirectory() {
         return ImageDirectory;
@@ -27,5 +26,10 @@ public class GlobalConfig {
     private static final String VERSION = "_v1.0.1";
     public static String getVersion() {
         return VERSION;
+    }
+
+    private static final Boolean PrintBacks = true;
+    public static Boolean getPrintBacks() {
+        return PrintBacks;
     }
 }
