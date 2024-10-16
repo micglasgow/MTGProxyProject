@@ -18,18 +18,22 @@ public class GlobalConfig {
         return ImageDirectory;
     }
 
-    private static final String nanDeckScript = "src/main/resources/nanDeck/nanDeckScript2.txt";
+    private static final String nanDeckScript = "src/main/resources/nanDeck/nanDeckScript.txt";
     public static String getNanDeckScript() {
         return nanDeckScript;
     }
 
-    private static final String VERSION = "_v1.0.1";
+    private static final String VERSION = "_v1.0.2";
     public static String getVersion() {
         return VERSION;
     }
 
-    private static final Boolean PrintBacks = true;
+    private static final Boolean PrintBacks = false;
     public static Boolean getPrintBacks() {
         return PrintBacks;
+    }
+
+    public static boolean getSkipBasicLands() {
+        return false;
     }
 }

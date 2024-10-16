@@ -20,9 +20,6 @@ public class App
         
         MultiFileReader multiFileReader = new MultiFileReader();
         File[] selectedFiles = multiFileReader.selectFiles();
-        for (File file : selectedFiles) {
-            System.out.println("Selected file: " + file.getName());
-        }
 
         CardIntake cardIntake = new CardIntake(selectedFiles);
         List<MTGCard> mtgCardList = cardIntake.getCardList();
@@ -41,15 +38,15 @@ public class App
         nanDeckScriptGenerator.printScript(GlobalConfig.getNanDeckScript(), multiFileReader.getFileName());
 
         int cardsPerSheet = 9;
-        if (cardIntake.getTotalCardCount(false) % cardsPerSheet == 0) {
+        if (cardIntake.getTotalCardCount(!GlobalConfig.getSkipBasicLands()) % cardsPerSheet == 0) {
             System.out.println("Divisible by 9");
-            System.out.println("Total cards: " + cardIntake.getTotalCardCount(false));
-            System.out.println("Total sheets: " + cardIntake.getTotalCardCount(false) / cardsPerSheet);
+            System.out.println("Total cards: " + cardIntake.getTotalCardCount(!GlobalConfig.getSkipBasicLands()));
+            System.out.println("Total sheets: " + cardIntake.getTotalCardCount(!GlobalConfig.getSkipBasicLands()) / cardsPerSheet);
         } else {
             System.out.println("\r\n\r\nWARNING!! Not divisible by 9\r\n\r\n");
-            System.out.println("Total cards: " + cardIntake.getTotalCardCount(false));
-            System.out.println("Total sheets: " + ((cardIntake.getTotalCardCount(false) / cardsPerSheet)+1)) ;
-            System.out.println("Please add " + (cardsPerSheet - (cardIntake.getTotalCardCount(false) % cardsPerSheet)) + " cards to make it divisible by 9");
+            System.out.println("Total cards: " + cardIntake.getTotalCardCount(!GlobalConfig.getSkipBasicLands()));
+            System.out.println("Total sheets: " + ((cardIntake.getTotalCardCount(!GlobalConfig.getSkipBasicLands()) / cardsPerSheet)+1)) ;
+            System.out.println("Please add " + (cardsPerSheet - (cardIntake.getTotalCardCount(!GlobalConfig.getSkipBasicLands()) % cardsPerSheet)) + " cards to make it divisible by 9");
         }
 
         System.out.println("Done!");

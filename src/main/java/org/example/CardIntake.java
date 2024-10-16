@@ -45,6 +45,7 @@ public class CardIntake {
                     continue;
                 }
                 String cardId = record[16];
+                System.out.println("Card ID: " + cardId);
 
                 if (allCards.isDoubleFaced(cardId)) {
                     List<MTGCard> doubleFacedCard = allCards.getDoubleFacedCards(cardId);
@@ -64,6 +65,7 @@ public class CardIntake {
                     }
                     int cardCount = Integer.parseInt(record[1]);
                     String imageUrl = allCards.getCardInfoById(cardId).getImageUrl();
+                    System.out.println("Image URL: " + imageUrl);
                     MTGCard mtgCard = new MTGCard(cardId, cardName, imageUrl, type);
                     cardList.add(mtgCard);
                     cardCountMap.put(mtgCard.getFileName(), cardCount);

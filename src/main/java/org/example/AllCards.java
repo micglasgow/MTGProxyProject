@@ -6,11 +6,14 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 public class AllCards {
 
     private static JsonNode cards;
+    private static Map<String, JsonNode> cardMap;
 
     public AllCards() {
         loadCards();
@@ -18,9 +21,15 @@ public class AllCards {
 
     private void loadCards() {
         ObjectMapper objectMapper = new ObjectMapper();
+        cardMap = new HashMap<>();
         try (InputStream inputStream = getClass().getClassLoader().getResourceAsStream("default-cards.json")) {
             if (inputStream != null) {
                 cards = objectMapper.readTree(inputStream);
+                if (cards.isArray()) {
+                    for (JsonNode card : cards) {
+                        cardMap.put(card.get("id").asText(), card);
+                    }
+                }
             } else {
                 throw new RuntimeException("default-cards.json not found in resources folder");
             }
@@ -82,29 +91,28 @@ public class AllCards {
     }
 
     public static MTGCard getCardInfoById(String id) {
-        if (cards != null && cards.isArray()) {
-            for (JsonNode card : cards) {
-                if (card.get("id").asText().equals(id)) {
-                    String cardName = card.get("name").asText();
-                    String imageUrl = null;
+        JsonNode card = cardMap.get(id);
+        System.out.println("Card: " + card);
+        if (card != null) {
+            String cardName = card.get("name").asText();
+            String imageUrl = null;
 
-                    try {
-                        imageUrl = card.get("image_uris").get("png").asText();
-                    } catch (NullPointerException e) {
-                        System.out.println("No png image found for card: " + cardName);
-                        System.out.println("Attempting to use large jpg image instead");
-                    }
-                    if (imageUrl == null) {
-                        try {
-                            imageUrl = card.get("image_uris").get("large").asText();
-                        } catch (NullPointerException e) {
-                            System.out.println("No large image found for card: " + cardName);
-                            imageUrl = "000_Magic_card_back.png";
-                        }
-                    }
-                    return new MTGCard(id, cardName, imageUrl);
+            try {
+                imageUrl = card.get("image_uris").get("png").asText();
+                System.out.println("Found png image for card: " + cardName);
+            } catch (NullPointerException e) {
+                System.out.println("No png image found for card: " + cardName);
+                System.out.println("Attempting to use large jpg image instead");
+            }
+            if (imageUrl == null) {
+                try {
+                    imageUrl = card.get("image_uris").get("large").asText();
+                } catch (NullPointerException e) {
+                    System.out.println("No large image found for card: " + cardName);
+                    imageUrl = "000_Magic_card_back.png";
                 }
             }
+            return new MTGCard(id, cardName, imageUrl);
         }
         return null;
     }
